@@ -1,0 +1,29 @@
+.url-input {
+    input {
+        width: 544px;
+        height: 60px;
+        font-size: 20px;
+    }
+}
+
+.button-input {
+    button {
+        width: 200px;
+        height: 60px;
+        font-size: 20px;
+
+        color: white;
+        background-color: rgba(0,0,0,0.8);
+        border-color: white;
+
+        &:disabled {
+            color: white;
+            background-color: rgba(0,0,0,0.8);
+        }
+    }
+}
+
+.form-title {
+    font-size: 36px;
+    color: white;
+}

@@ -1,0 +1,51 @@
+.layout {
+    height: 100%;
+    background-color: #ebba1a;
+    background-image: -webkit-linear-gradient(-30deg, rgb(19, 83, 139) 50%, #013A6B 50%);
+    min-height: 500px;
+
+    .header {
+        background: transparent;
+        .logo {
+            width: 50px;
+            float: left;
+        }
+
+        .menu {
+            color: white;
+            text-align: right;
+            line-height: 64px;
+            background: none;
+            border-bottom: unset;
+
+            .ant-menu-item {
+                transition: none;
+            }
+
+            .ant-menu-item:hover {
+                border-bottom: 2px solid transparent;
+                color: #ebba1a;
+            }
+
+            .login-button {
+                border: 1px solid white;
+                padding: 10px 40px 10px 40px;
+                border-radius: 4px;
+                color: white;
+            }
+        }
+    }
+
+    .content {
+        padding: 50px;
+        padding-top: 14%;
+        background: transparent;
+        text-align: center;
+    }
+
+    .footer {
+        text-align: center;
+        background: transparent;
+        color: white;
+    }
+}

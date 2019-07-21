@@ -1,0 +1,32 @@
+.register-form {
+  max-width: 300px;
+  min-width: 300px;
+}
+
+@media only screen and (max-width: 500px) {
+  .register-form {
+    max-width: 250px;
+    min-width: 250px;
+  }
+}
+
+.register-form-button {
+  width: 100%;
+}
+
+#register {
+  position: absolute;
+  border-radius: 6px;
+  top: 50%;
+  left: 50%;
+  margin-top: -250px;
+  margin-left: -150px;
+}
+
+#register-container {
+  width: 100%;
+  height: 100%;
+  background: #053f7e;
+  background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
+  position: absolute;
+}
