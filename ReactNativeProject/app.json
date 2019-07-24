@@ -1,4 +1,9 @@
 {
   "name": "ReactNativeProject",
-  "displayName": "ReactNativeProject"
+  "displayName": "ReactNativeProject",
+  "splash": {
+    "image": "./assets/splash.png",
+    "resizeMode": "cover",
+    "backgroundColor": "#000000"
+  }
 }

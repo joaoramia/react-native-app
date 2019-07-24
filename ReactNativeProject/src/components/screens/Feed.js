@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   RefreshControl,
   ScrollView
 } from "react-native";
 import RandomPost from "../presentation/RandomPost";
 import AddPostButton from "../presentation/AddPostButton";
+import { backgroundColor } from "../../common/assets/styles/variables";
 
 class Feed extends Component {
   constructor(props) {
@@ -58,7 +58,7 @@ class Feed extends Component {
       );
     }
     return (
-      <View style={{ position: 'relative' }}>
+      <View style={{ position: 'relative', backgroundColor: backgroundColor }}>
         <ScrollView
           style={styles.container}
           refreshControl={

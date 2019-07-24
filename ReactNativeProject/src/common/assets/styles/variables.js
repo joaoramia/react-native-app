@@ -5,3 +5,7 @@ export const PostColors = [
     '#52B2CF',
     '#7EC4CF'
 ]
+
+export const fontColor = 'rgb(0, 0, 0)'
+
+export const backgroundColor = 'rgb(250, 250, 250)'

@@ -6,11 +6,6 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { createStackNavigator, createAppContainer } from 'react-navigation'
 
 export default class AddPostButton extends Component {
-  clickHandler = () => {
-    // Alert.alert('Floating Button Clicked');
-    // this.props.navigation.navigate('NewPost')
-  };
-
   render() {
     const { navigate } = this.props.navigation;
     return (

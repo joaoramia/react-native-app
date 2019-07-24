@@ -1,20 +1,22 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import { createStackNavigator, createAppContainer } from 'react-navigation';
+import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import Feed from "./components/screens/Feed";
 import NewPost from "./components/screens/NewPost";
+import { AuthLoading } from "./components/screens/AuthLoading";
 
-const RootStack = createStackNavigator(
+const RootStack = createSwitchNavigator(
     {
-      Feed: Feed,
-      NewPost: NewPost
+      AuthLoading,
+      Feed,
+      NewPost
     },
     {
-      initialRouteName: 'Feed',
+      initialRouteName: 'AuthLoading',
     }
   );
 
-const AppContainer = createAppContainer(RootStack);
+const AppContainer = createAppContainer(RootStack, RootStack);
 
 class ReactNativeProject extends Component {
     render() {

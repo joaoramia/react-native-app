@@ -5,24 +5,18 @@ const User = require('../models/User');
  */
 exports.postSignup = async (req, res, next) => {
   try {
-    const { password } = req.body;
-    if (!password) {
-      return res.status(403).send({ message: 'Password is required' });
-    }
-    const user = new User(req.body);
-
-    user.setPassword(password);
-    user.generateSiteToken();
+    const user = new User();
 
     await user.save();
 
     const token = user.generateJWT();
 
-    res.status(200).send({
+    console.log(token, user._id);
+    return res.status(200).send({
       token
     });
   } catch (err) {
-    console.error(`[UserCtrl#postLogin] ${err}`);
+    console.log(`[UserCtrl#postLogin] ${err}`);
     return res.status(403).send({ message: err });
   }
 };
