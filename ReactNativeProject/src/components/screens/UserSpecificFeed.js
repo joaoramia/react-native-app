@@ -16,12 +16,12 @@ class LogoTitle extends React.Component {
   }
   render() {
     return (
-      <Text onPress={() => this.gom()}>HELLO!</Text>
+      <Text onPress={() => this.gom()}>My Comments!</Text>
     );
   }
 }
 
-class Feed extends Component {
+class UserSpecificFeed extends Component {
   static navigationOptions = {
     // headerTitle instead of title
     headerTitle: <LogoTitle />,
@@ -42,7 +42,7 @@ class Feed extends Component {
   async fetchData() {
     try {
       const token = await getUserToken()
-      const response = await fetch('http://127.0.0.1:8080/api/comments', {
+      const response = await fetch('http://127.0.0.1:8080/api/me/comments', {
         method: 'GET',
         headers: {
             Accept: 'application/json',
@@ -101,4 +101,4 @@ const styles = StyleSheet.create({
   container: {}
 });
 
-export default Feed ;
+export default UserSpecificFeed ;

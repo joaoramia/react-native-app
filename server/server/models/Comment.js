@@ -5,6 +5,10 @@ const commentSchema = new mongoose.Schema(
     content: {
       type: String,
       required: [true, "can't be blank"]
+    },
+    userId: {
+      type: String,
+      required: [true, "userId can't be blank"]
     }
   },
   { timestamps: true }
