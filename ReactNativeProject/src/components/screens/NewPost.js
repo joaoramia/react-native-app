@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, TextInput, Button } from "react-native";
-import { getUserToken } from "../../smart/helpers/session";
+import { View, StyleSheet, TextInput, Button } from "react-native";
+import { getUserToken, getUserCoords } from "../../smart/helpers/session";
 
 class NewPost extends Component {
     constructor() {
@@ -12,13 +12,20 @@ class NewPost extends Component {
     }
     state = {
         text: '',
-        token: null
+        token: null,
+        coords: null
     }
 
     async post() {
         let token = this.state.token;
-
+        
         try {
+            const coords = await getUserCoords();
+
+            if (coords) {
+                this.setState({...this.state, coords});
+            }
+            console.log('nbvc', this.state);
             if (!token) {
                 token = await getUserToken();
             }
@@ -30,20 +37,21 @@ class NewPost extends Component {
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    content: this.state.text
+                    content: this.state.text,
+                    coords
                 }),
             })
     
             if (postResponse) {
                 this.props.navigation.navigate('Feed');
             }
+    
         }
         catch(err) {
             alert('ERROR');
         }
     }
     render() {
-        const { navigate } = this.props.navigation;
         return (
             <View style={styles.container}>
                 <TextInput

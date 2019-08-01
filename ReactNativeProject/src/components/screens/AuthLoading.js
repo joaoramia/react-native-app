@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage'
+import Geolocation from '@react-native-community/geolocation'
 
 export class AuthLoading extends React.Component {
     constructor() {
@@ -16,6 +17,11 @@ export class AuthLoading extends React.Component {
 
     // Fetch the token from storage then navigate to our appropriate place
     _bootstrapAsync = async () => {
+        Geolocation.getCurrentPosition(async info => {
+            if (info.coords) {
+                await AsyncStorage.setItem('coords', JSON.stringify(info.coords));
+            }
+        })
         const userToken = await AsyncStorage.getItem('userToken');
 
         // This will switch to the App screen or Auth screen and this loading

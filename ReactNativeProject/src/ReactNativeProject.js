@@ -4,7 +4,7 @@ import { createSwitchNavigator, createAppContainer, createBottomTabNavigator, cr
 import Feed from "./components/screens/Feed";
 import UserSpecificFeed from "./components/screens/UserSpecificFeed";
 import NewPost from "./components/screens/NewPost";
-import { faMapPin, faUser, faComment } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faComment } from '@fortawesome/free-solid-svg-icons'
 import { AuthLoading } from "./components/screens/AuthLoading";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { fontColor } from "./common/assets/styles/variables";
@@ -23,6 +23,19 @@ const StackNav = createStackNavigator({
   }
 )
 
+const StackNavUser = createStackNavigator({
+    UserSpecificFeed: {
+      screen: UserSpecificFeed,
+      navigationOptions: ({ navigation }) => ({
+        title: `My comments`,
+      })
+    }
+  },
+  { 
+    initialRouteName: 'UserSpecificFeed'
+  }
+)
+
 const TabNav = createBottomTabNavigator({
   Feed: {
     screen: StackNav,
@@ -34,7 +47,7 @@ const TabNav = createBottomTabNavigator({
     }
   },
   UserSpecificFeed: {
-    screen: UserSpecificFeed,
+    screen: StackNavUser,
     navigationOptions: ({ navigation }) => ({
       title: `My comments`,
       tabBarIcon: () => (

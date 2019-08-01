@@ -10,6 +10,7 @@ import RandomPost from "../presentation/RandomPost";
 import AddPostButton from "../presentation/AddPostButton";
 import { backgroundColor } from "../../common/assets/styles/variables";
 import { getUserToken } from "../../smart/helpers/session";
+import { NavigationEvents } from "react-navigation";
 class LogoTitle extends React.Component {
   gom(){
     alert('hi')
@@ -60,10 +61,6 @@ class UserSpecificFeed extends Component {
     }
   }
 
-  componentDidMount() {
-    return this.fetchData() ;
-  }
-
   render() {
     let posts = [];
 
@@ -80,6 +77,9 @@ class UserSpecificFeed extends Component {
     }
     return (
       <View style={{ position: 'relative', backgroundColor: backgroundColor }}>
+        <NavigationEvents
+          onWillFocus={() => this.fetchData()}
+        />
         <ScrollView
           style={styles.container}
           refreshControl={
@@ -91,7 +91,6 @@ class UserSpecificFeed extends Component {
         >
           {posts}
         </ScrollView>
-        <AddPostButton navigation={this.props.navigation} />
       </View>
     );
   }

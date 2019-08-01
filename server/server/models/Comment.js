@@ -9,6 +9,17 @@ const commentSchema = new mongoose.Schema(
     userId: {
       type: String,
       required: [true, "userId can't be blank"]
+    },
+    city: {
+      type: String
+    },
+    coords: {
+      lat: {
+        type: Number
+      },
+      lng: {
+        type: Number
+      }
     }
   },
   { timestamps: true }
