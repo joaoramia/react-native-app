@@ -2,7 +2,7 @@
  * Google Maps client.
  */
 const googleMapsClient = require('@google/maps').createClient({
-    key: 'AIzaSyC1GqkAtCT4NSLR95Sot32b2IbReYekbOw'
+    key: process.env.GOOGLE_API_KEY
 });
 
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {

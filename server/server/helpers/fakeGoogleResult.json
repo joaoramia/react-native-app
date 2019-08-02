@@ -641,9 +641,7 @@
         }],
         "status": "OK"
     },
-    "requestUrl": "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.785834%2C-122.406417&key=AIzaSyC1GqkAtCT4NSLR95Sot32b2IbReYekbOw",
     "query": {
-        "latlng": "37.785834,-122.406417",
-        "key": "AIzaSyC1GqkAtCT4NSLR95Sot32b2IbReYekbOw"
+        "latlng": "37.785834,-122.406417"
     }
 }
