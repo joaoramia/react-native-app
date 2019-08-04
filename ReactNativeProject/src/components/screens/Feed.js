@@ -77,7 +77,7 @@ class Feed extends Component {
 
     for (let i = 0; i < (dataSource || []).length; i++) {
       console.log(dataSource[i].distance);
-      let city = dataSource[i].city || 'nearby';
+      let city = dataSource[i].city || 'unknown location';
   
       if (typeof dataSource[i].distance === 'number') {
         if (dataSource[i].distance < 3) {
@@ -89,9 +89,15 @@ class Feed extends Component {
       posts.push(
         <RandomPost
           key={dataSource[i]._id}
+          commentId={dataSource[i]._id}
           content={dataSource[i].content}
           time={dataSource[i].createdAt}
           city={city}
+          likes={dataSource[i].likes}
+          liked={dataSource[i].liked}
+          disliked={dataSource[i].disliked}
+          showOptions={true}
+          navigation={this.props.navigation}
         />
       );
     }

@@ -56,14 +56,18 @@ exports.getComments = async (req, res, next) => {
     let comments = await Comment.find({}).sort({createdAt: 'descending'});
     if (coords) {
       comments = comments.map(comment => {
-        if (comment.coords && comment.coords.lat) {
-          console.log(typeof coords.latitude, typeof coords.longitude, typeof comment.coords.lat, typeof comment.coords.lng);
-          // console.log(getDistanceFromLatLonInKm(coords.lat, coords.lng, comment.coords.lat, comment.coords.lng));
-          const distance = getDistanceFromLatLonInKm(coords.latitude, coords.longitude, comment.coords.lat, comment.coords.lng);
-          console.log(distance);
-          return {...comment._doc, distance};
+        let doc = {...comment._doc};
+        if (comment.likedUsers && comment.likedUsers.indexOf(req.userId) >= 0) {
+          doc = {...doc, liked: true};
         }
-        return comment;
+        if (comment.likedUsers && comment.dislikedUsers.indexOf(req.userId) >= 0) {
+          doc = {...doc, disliked: true};
+        }
+        if (comment.coords && comment.coords.lat) {
+          const distance = getDistanceFromLatLonInKm(coords.latitude, coords.longitude, comment.coords.lat, comment.coords.lng);
+          doc = {...doc, distance};
+        }
+        return doc;
       })
     }
     console.log(comments[0]);
@@ -74,10 +78,77 @@ exports.getComments = async (req, res, next) => {
   }
 };
 
+exports.getComment = async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const comment = await Comment.findById(id);
+
+    let doc = {...comment._doc};
+
+    if (comment.likedUsers && comment.likedUsers.indexOf(req.userId) >= 0) {
+      doc = {...doc, liked: true};
+    }
+
+    if (comment.likedUsers && comment.dislikedUsers.indexOf(req.userId) >= 0) {
+      doc = {...doc, disliked: true};
+    }
+    
+    console.log(comment);
+    res.status(200).send({ comment: doc });
+  } catch (err) {
+    console.log('ERROR', err);
+    return res.status(500).send({ message: 'Something went wrong.' });
+  }
+};
+
+exports.likeComment = async (req, res, next) => {
+  const {id, value} = req.body;
+  
+  console.log('=================', {id, value, userId: req.userId});
+  try {
+    let comment;
+    if (value > 0) {
+      comment = await Comment.findByIdAndUpdate(id, {$inc: {likes: 1}, $push: {likedUsers: req.userId}});
+    } else {
+      comment = await Comment.findByIdAndUpdate(id, {$inc: {likes: -1}, $push: {dislikedUsers: req.userId}});
+    }
+
+    res.status(200).send({ comment });
+  } catch (err) {
+    console.log('ERROR', err);
+    return res.status(500).send({ message: 'Something went wrong.' });
+  }
+};
+
+exports.reportAbuse = async (req, res, next) => {
+  const {id} = req.body;
+  
+  try {
+    const comment = await Comment.findByIdAndUpdate(id, {$inc: {reportAbuse: 1}});
+
+    res.status(200).send({ comment });
+  } catch (err) {
+    console.log('ERROR', err);
+    return res.status(500).send({ message: 'Something went wrong.' });
+  }
+};
+
 exports.getUserComments = async (req, res, next) => {
   try {
     const {userId} = req;
-    const comments = await Comment.find({userId}).sort({createdAt: 'descending'});
+    let comments = await Comment.find({userId}).sort({createdAt: 'descending'});
+
+    comments = comments.map(comment => {
+      let doc = {...comment._doc};
+      if (comment.likedUsers && comment.likedUsers.indexOf(req.userId) >= 0) {
+        doc = {...doc, liked: true};
+      }
+      if (comment.likedUsers && comment.dislikedUsers.indexOf(req.userId) >= 0) {
+        doc = {...doc, disliked: true};
+      }
+      return doc;
+    })
+
     res.status(200).send({ comments });
   } catch (err) {
     console.log('ERROR', err);

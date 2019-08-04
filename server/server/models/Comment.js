@@ -20,6 +20,29 @@ const commentSchema = new mongoose.Schema(
       lng: {
         type: Number
       }
+    },
+    likes: {
+      type: Number,
+      default: 0
+    },
+    likedUsers: {
+      type: [String],
+      default: []
+    },
+    dislikedUsers: {
+      type: [String],
+      default: []
+    },
+    comments: {
+      type: Array,
+      default: []
+    },
+    reportAbuse: {
+      type: Number,
+      default: 0
+    },
+    comments: {
+      type: Array
     }
   },
   { timestamps: true }

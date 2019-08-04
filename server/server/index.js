@@ -100,7 +100,10 @@ app.get('/api/me', isAuthenticated, userController.getUser);
 app.put('/api/me', isAuthenticated, userController.updateUser);
 app.get(`/api/users/${config.adminToken}`, userController.getAllUsers);
 app.post('/api/comments', isAuthenticated, commentController.getComments);
+app.get('/api/comments/:id', isAuthenticated, commentController.getComment);
 app.post('/api/comment', isAuthenticated, commentController.postComment);
+app.post('/api/comment/like', isAuthenticated, commentController.likeComment);
+app.post('/api/comment/reportAbuse', isAuthenticated, commentController.reportAbuse);
 app.get('/api/me/comments', isAuthenticated, commentController.getUserComments);
 
 app.use(express.static(path.join(__dirname, '../client/portal/build')));

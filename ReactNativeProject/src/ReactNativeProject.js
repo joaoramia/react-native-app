@@ -4,6 +4,7 @@ import { createSwitchNavigator, createAppContainer, createBottomTabNavigator, cr
 import Feed from "./components/screens/Feed";
 import UserSpecificFeed from "./components/screens/UserSpecificFeed";
 import NewPost from "./components/screens/NewPost";
+import PostDetails from "./components/screens/PostDetails";
 import { faUser, faComment } from '@fortawesome/free-solid-svg-icons'
 import { AuthLoading } from "./components/screens/AuthLoading";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -16,6 +17,7 @@ const StackNav = createStackNavigator({
         title: `Feed`,
       })
     },
+    PostDetails,
     NewPost
   },
   { 
@@ -60,7 +62,6 @@ const TabNav = createBottomTabNavigator({
 const RootStack = createSwitchNavigator(
   {
     AuthLoading,
-    // Feed,
     TabNav,
     NewPost
   },

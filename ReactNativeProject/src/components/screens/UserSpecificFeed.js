@@ -70,8 +70,14 @@ class UserSpecificFeed extends Component {
       posts.push(
         <RandomPost
           key={dataSource[i]._id}
+          commentId={dataSource[i]._id}
           content={dataSource[i].content}
           time={dataSource[i].createdAt}
+          likes={dataSource[i].likes}
+          liked={dataSource[i].liked}
+          disliked={dataSource[i].disliked}
+          showOptions={false}
+          navigation={this.props.navigation}
         />
       );
     }
