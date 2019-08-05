@@ -102,6 +102,7 @@ app.get(`/api/users/${config.adminToken}`, userController.getAllUsers);
 app.post('/api/comments', isAuthenticated, commentController.getComments);
 app.get('/api/comments/:id', isAuthenticated, commentController.getComment);
 app.post('/api/comment', isAuthenticated, commentController.postComment);
+app.post('/api/commentPost', isAuthenticated, commentController.commentPost);
 app.post('/api/comment/like', isAuthenticated, commentController.likeComment);
 app.post('/api/comment/reportAbuse', isAuthenticated, commentController.reportAbuse);
 app.get('/api/me/comments', isAuthenticated, commentController.getUserComments);

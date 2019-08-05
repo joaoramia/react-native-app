@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { View, StyleSheet, TextInput, Button } from "react-native";
 import { getUserToken, getUserCoords } from "../../smart/helpers/session";
+import AlertMessage from "../presentation/AlertMessage";
 
 class NewPost extends Component {
     constructor() {
@@ -9,6 +10,7 @@ class NewPost extends Component {
         .then(token => {
             this.setState({token});
         })
+        this.alertRef = React.createRef();
     }
     state = {
         text: '',
@@ -25,7 +27,7 @@ class NewPost extends Component {
             if (coords) {
                 this.setState({...this.state, coords});
             }
-            console.log('nbvc', this.state);
+
             if (!token) {
                 token = await getUserToken();
             }
@@ -38,7 +40,8 @@ class NewPost extends Component {
                 },
                 body: JSON.stringify({
                     content: this.state.text,
-                    coords
+                    coords,
+                    color: Math.ceil(Math.random() * (5))
                 }),
             })
     
@@ -48,7 +51,7 @@ class NewPost extends Component {
     
         }
         catch(err) {
-            alert('ERROR');
+            this.alertRef.current._move();
         }
     }
     render() {
@@ -63,6 +66,7 @@ class NewPost extends Component {
                 />
                 <Button title="Send!" onPress={() => this.post()}>
                 </Button>
+                <AlertMessage ref={this.alertRef}></AlertMessage>
             </View>
         );
     }

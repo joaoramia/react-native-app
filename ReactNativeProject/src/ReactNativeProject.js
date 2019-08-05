@@ -5,10 +5,10 @@ import Feed from "./components/screens/Feed";
 import UserSpecificFeed from "./components/screens/UserSpecificFeed";
 import NewPost from "./components/screens/NewPost";
 import PostDetails from "./components/screens/PostDetails";
-import { faUser, faComment } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faComment, faTape } from '@fortawesome/free-solid-svg-icons'
 import { AuthLoading } from "./components/screens/AuthLoading";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { fontColor } from "./common/assets/styles/variables";
+import { fontColor, PostColors } from "./common/assets/styles/variables";
 
 const StackNav = createStackNavigator({
     Feed: {
@@ -17,11 +17,14 @@ const StackNav = createStackNavigator({
         title: `Feed`,
       })
     },
-    PostDetails,
-    NewPost
+    NewPost,
+    PostDetails
   },
   { 
-    initialRouteName: 'Feed'
+    initialRouteName: 'Feed',
+    // navigationOptions: ({ navigation }) => ({
+    //   tabBarVisible: navigation.state.routes[navigation.state.index].routeName === 'PostDetails' ? false : true
+    // })
   }
 )
 
@@ -31,7 +34,8 @@ const StackNavUser = createStackNavigator({
       navigationOptions: ({ navigation }) => ({
         title: `My comments`,
       })
-    }
+    },
+    PostDetails
   },
   { 
     initialRouteName: 'UserSpecificFeed'
@@ -44,19 +48,22 @@ const TabNav = createBottomTabNavigator({
     navigationOptions: {
       title: "Feed",
       tabBarIcon: () => (
-        <FontAwesomeIcon icon={faComment} color={fontColor} />
+        <FontAwesomeIcon icon={faTape} size={24} color={PostColors[1]} />
       )
     }
   },
   UserSpecificFeed: {
     screen: StackNavUser,
     navigationOptions: ({ navigation }) => ({
-      title: `My comments`,
+      showLabel: false,
       tabBarIcon: () => (
-        <FontAwesomeIcon icon={faUser} color={fontColor} />
+        <FontAwesomeIcon icon={faUser} size={24} color={PostColors[2]} />
       )
     })
   }
+},
+{
+  tabBarOptions: {showLabel: false}
 })
 
 const RootStack = createSwitchNavigator(

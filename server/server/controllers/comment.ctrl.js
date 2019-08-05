@@ -5,7 +5,7 @@ const {googleMapsClient, getDistanceFromLatLonInKm} = require('../helpers/google
 
 exports.postComment = async (req, res, next) => {
   try {
-    const {content} = req.body;
+    const {content, color} = req.body;
     const {userId} = req;
     console.log('----------- COORDS', req.body.coords);
     // googleMapsClient.reverseGeocode({latlng: {lat: 37.785834, lng: -122.406417}}, (err, res) => {
@@ -36,9 +36,9 @@ exports.postComment = async (req, res, next) => {
         lat: latitude,
         lng: longitude
       }
-      comment = new Comment({ content, userId, city: city.long_name, coords});
+      comment = new Comment({ content, color, userId, city: city.long_name, coords});
     } else {
-      comment = new Comment({ content, userId, city: city.long_name});
+      comment = new Comment({ content, color, userId, city: city.long_name});
     }
     
     await comment.save();
@@ -129,6 +129,55 @@ exports.reportAbuse = async (req, res, next) => {
     res.status(200).send({ comment });
   } catch (err) {
     console.log('ERROR', err);
+    return res.status(500).send({ message: 'Something went wrong.' });
+  }
+};
+
+exports.commentPost = async (req, res, next) => {
+  console.log('---------------------------', req.body.content, req.body.postId, req.userId);
+  try {
+    const {content, postId, color} = req.body;
+    const {userId} = req;
+    console.log('----------- COORDS', req.body.coords);
+    // googleMapsClient.reverseGeocode({latlng: {lat: 37.785834, lng: -122.406417}}, (err, res) => {
+    //   console.log('-----------------------ERR: ', err);
+    //   console.log('-----------------------RES: ', JSON.stringify(res));
+    // })
+
+    // put inside of googleMapsClient callback:
+    const geoResults = fakeGoogleResult.json.results || [];
+    const city = geoResults.reduce((prev, curr) => {
+      const foundCity = (curr.address_components || []).reduce((prev2, curr2) => {
+        if (curr2.types.indexOf('locality') >= 0) {
+          return curr2;
+        } else {
+          return prev2;
+        }
+      }, null);
+      return foundCity || prev;
+    }, null);
+
+    console.log('xxxxxxxxx', city);
+
+    let comment;
+    let coords;
+    if (req.body.coords) {
+      const { latitude, longitude } = req.body.coords;
+      coords = {
+        lat: latitude,
+        lng: longitude
+      }
+      comment = { content, userId, color, city: city.long_name, coords, likes: 0, likedUsers: [], dislikedUsers: []};
+    } else {
+      comment = { content, userId, color, city: city.long_name, likes: 0, likedUsers: [], dislikedUsers: []};
+    }
+
+    comment.createdAt = +new Date();
+    
+    await Comment.findByIdAndUpdate(postId, {$push: {comments: comment}});
+    return res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
     return res.status(500).send({ message: 'Something went wrong.' });
   }
 };

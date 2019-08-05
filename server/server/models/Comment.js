@@ -43,6 +43,9 @@ const commentSchema = new mongoose.Schema(
     },
     comments: {
       type: Array
+    },
+    color: {
+      type: Number
     }
   },
   { timestamps: true }

@@ -8,16 +8,20 @@ import {
 } from "react-native";
 import RandomPost from "../presentation/RandomPost";
 import AddPostButton from "../presentation/AddPostButton";
-import { backgroundColor } from "../../common/assets/styles/variables";
+import { backgroundColor, PostColors } from "../../common/assets/styles/variables";
 import { getUserToken } from "../../smart/helpers/session";
 import { NavigationEvents } from "react-navigation";
+import LikeButton from "../presentation/LikeButton";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import AlertMessage from "../presentation/AlertMessage";
 class LogoTitle extends React.Component {
-  gom(){
-    alert('hi')
-  }
   render() {
     return (
-      <Text onPress={() => this.gom()}>My Comments!</Text>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
+        <Text style={{paddingRight: 4, fontSize: 18}}>Meus posts</Text>
+        <FontAwesomeIcon icon={faUser} size={24} color={PostColors[2]} />
+      </View>
     );
   }
 }
@@ -30,7 +34,8 @@ class UserSpecificFeed extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { isLoading: true, refreshing: false, token: null } ;
+    this.state = { isLoading: true, refreshing: false, token: null };
+    this.alertRef = React.createRef();
   }
 
   _onRefresh = () => {
@@ -57,7 +62,7 @@ class UserSpecificFeed extends Component {
         dataSource: responseJson.comments
       })
     } catch(err) {
-      alert(err)
+      this.alertRef.current._move();
     }
   }
 
@@ -66,37 +71,52 @@ class UserSpecificFeed extends Component {
 
     const { dataSource } = this.state;
 
-    for (let i = 0; i < (this.state.dataSource || []).length; i++) {
+    for (let i = 0; i < (dataSource || []).length; i++) {
+      let city = dataSource[i].city || 'unknown location';
+  
+      if (typeof dataSource[i].distance === 'number') {
+        if (dataSource[i].distance < 3) {
+          city = 'muito perto';
+        } else {
+          city = dataSource[i].distance;
+        }
+      }
       posts.push(
         <RandomPost
           key={dataSource[i]._id}
           commentId={dataSource[i]._id}
           content={dataSource[i].content}
           time={dataSource[i].createdAt}
+          city={city}
           likes={dataSource[i].likes}
           liked={dataSource[i].liked}
+          color={PostColors[dataSource[i].color || 0]}
           disliked={dataSource[i].disliked}
-          showOptions={false}
+          clickable={true}
+          showOptions={true}
           navigation={this.props.navigation}
-        />
+        >
+          <LikeButton style={{width: '20%'}} likes={dataSource[i].likes} commentId={dataSource[i]._id} liked={dataSource[i].liked} disliked={dataSource[i].disliked} />
+        </RandomPost>
       );
     }
     return (
       <View style={{ position: 'relative', backgroundColor: backgroundColor }}>
         <NavigationEvents
-          onWillFocus={() => this.fetchData()}
+          onWillFocus={async payload => await this.fetchData()}
         />
         <ScrollView
           style={styles.container}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
+              onRefresh={async() => await this.fetchData()}
             />
           }
         >
           {posts}
         </ScrollView>
+        <AlertMessage ref={this.alertRef}></AlertMessage>
       </View>
     );
   }

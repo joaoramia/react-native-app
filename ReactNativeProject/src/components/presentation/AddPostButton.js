@@ -14,7 +14,7 @@ export default class AddPostButton extends Component {
           activeOpacity={0.7}
           onPress={() => navigate('NewPost')}
           style={styles.TouchableOpacityStyle}>
-            <FontAwesomeIcon icon={faPlus} color='white'/>
+            <FontAwesomeIcon icon={faPlus} color='white' size={22}/>
         </TouchableOpacity>
       </View>
     );
@@ -34,11 +34,13 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 50,
     fontSize: 18,
-    backgroundColor: 'rgb(10, 10, 10)',
+    borderWidth: 6,
+    borderColor: 'white',
+    backgroundColor: 'rgba(10, 10, 10, 0.2)',
     color: 'white',
     alignItems: 'center',
     alignContent: 'center',
     textAlign: 'center',
-    bottom: 30,
+    bottom: 10,
   }
 });
