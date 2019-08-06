@@ -9,14 +9,13 @@ export default class AlertMessage extends Component {
     }
 
     _move = () => {
-        console.log('MOVED ALERT');
         Animated.spring(this.moveAnimation, {
-            toValue: { x: 0, y: 0 },
+            toValue: { x: 0, y: 100 },
         }).start()
 
         setTimeout(() => {
             Animated.spring(this.moveAnimation, {
-                toValue: { x: 0, y: -200 },
+                toValue: { x: 0, y: -100 },
             }).start()
         }, 4000);
     }
@@ -33,7 +32,11 @@ export default class AlertMessage extends Component {
 }
 
 const styles = StyleSheet.create({
-    container: { position: 'absolute', width: '100%', zIndex: -1 },
+    container: {
+        position: 'absolute',
+        width: '100%',
+        top: -100
+    },
     tennisBall: {
         display: 'flex',
         justifyContent: 'center',
