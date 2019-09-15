@@ -5,7 +5,7 @@ import {
   RefreshControl,
   ScrollView,
   Text,
-  Animated
+  ActivityIndicator
 } from "react-native";
 import { NavigationEvents } from 'react-navigation';
 import RandomPost from "../presentation/RandomPost";
@@ -41,10 +41,10 @@ class Feed extends Component {
     super(props);
     this.state = { isLoading: true, refreshing: false, token: null };
     this.alertRef = React.createRef();
+    this.fetchData();
   }
 
   async fetchData() {
-    console.log('fetching data');
     try {
       const token = await getUserToken();
       const coords = await getUserCoords();
@@ -67,8 +67,10 @@ class Feed extends Component {
         dataSource: [...responseJson.comments]
       })
       this.forceUpdate();
-      console.log(responseJson);
     } catch(err) {
+      this.setState({
+        isLoading: false
+      })
       this.alertRef.current._move();
     }
   }
@@ -76,7 +78,7 @@ class Feed extends Component {
   render() {
     let posts = [];
 
-    const { dataSource } = this.state;
+    const { dataSource, isLoading } = this.state;
 
     for (let i = 0; i < (dataSource || []).length; i++) {
       let city = dataSource[i].city || 'unknown location';
@@ -102,36 +104,50 @@ class Feed extends Component {
           showOptions={true}
           navigation={this.props.navigation}
           clickable={true}
+          marginBottom={4}
         >
           <LikeButton style={{width: '20%'}} likes={dataSource[i].likes} commentId={dataSource[i]._id} liked={dataSource[i].liked} disliked={dataSource[i].disliked} />
         </RandomPost>
       );
     }
     return (
-      <View style={{ position: 'relative', backgroundColor: backgroundColor }}>
-        <NavigationEvents
-          onWillFocus={async payload => await this.fetchData()}
-        />
-        <ScrollView
-          style={styles.container}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={async() => await this.fetchData()}
-            />
-          }
-        >
-          {posts}
-        </ScrollView>
-        <AddPostButton navigation={this.props.navigation} />
-        <AlertMessage ref={this.alertRef}></AlertMessage>
-      </View>
+      isLoading ? 
+        <View style={[styles.container, styles.horizontal]}>
+          <ActivityIndicator size="large" color="#aba9a9" />
+          <AlertMessage ref={this.alertRef}></AlertMessage>
+        </View>
+      :
+        <View style={{ position: 'relative', backgroundColor: backgroundColor, flex: 1 }}>
+          <NavigationEvents
+            onWillFocus={async payload => await this.fetchData()}
+          />
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={async() => await this.fetchData()}
+              />
+            }
+          >
+            {posts}
+          </ScrollView>
+          <AddPostButton navigation={this.props.navigation} />
+          <AlertMessage ref={this.alertRef}></AlertMessage>
+        </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {}
+  container: {
+    flex: 1,
+    justifyContent: 'center'
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10
+  }
 });
 
 export default Feed ;

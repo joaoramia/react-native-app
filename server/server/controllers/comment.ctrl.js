@@ -53,7 +53,7 @@ exports.getComments = async (req, res, next) => {
   const coords = req.body.coords;
   console.log('=================', coords);
   try {
-    let comments = await Comment.find({}).sort({createdAt: 'descending'});
+    let comments = await Comment.find({parentId: null}).sort({createdAt: 'descending'});
     if (coords) {
       comments = comments.map(comment => {
         let doc = {...comment._doc};
@@ -82,6 +82,7 @@ exports.getComment = async (req, res, next) => {
   const id = req.params.id;
   try {
     const comment = await Comment.findById(id);
+    let postComments = await Comment.find({parentId: id}).sort({createdAt: 'ascending'});
 
     let doc = {...comment._doc};
 
@@ -92,19 +93,27 @@ exports.getComment = async (req, res, next) => {
     if (comment.likedUsers && comment.dislikedUsers.indexOf(req.userId) >= 0) {
       doc = {...doc, disliked: true};
     }
+
+    postComments = postComments.map(comment => {
+      let doc = {...comment._doc};
+      if (comment.likedUsers && comment.likedUsers.indexOf(req.userId) >= 0) {
+        doc = {...doc, liked: true};
+      }
+      if (comment.likedUsers && comment.dislikedUsers.indexOf(req.userId) >= 0) {
+        doc = {...doc, disliked: true};
+      }
+      return doc;
+    })
     
-    console.log(comment);
-    res.status(200).send({ comment: doc });
+    res.status(200).send({ comment: doc, postComments });
   } catch (err) {
-    console.log('ERROR', err);
     return res.status(500).send({ message: 'Something went wrong.' });
   }
 };
 
 exports.likeComment = async (req, res, next) => {
   const {id, value} = req.body;
-  
-  console.log('=================', {id, value, userId: req.userId});
+
   try {
     let comment;
     if (value > 0) {
@@ -167,14 +176,12 @@ exports.commentPost = async (req, res, next) => {
         lat: latitude,
         lng: longitude
       }
-      comment = { content, userId, color, city: city.long_name, coords, likes: 0, likedUsers: [], dislikedUsers: []};
+      comment = new Comment({ parentId: postId, content, userId, color, city: city.long_name, coords, likes: 0, likedUsers: [], dislikedUsers: []});
     } else {
-      comment = { content, userId, color, city: city.long_name, likes: 0, likedUsers: [], dislikedUsers: []};
+      comment = new Comment({ parentId: postId, content, userId, color, city: city.long_name, likes: 0, likedUsers: [], dislikedUsers: []});
     }
 
-    comment.createdAt = +new Date();
-    
-    await Comment.findByIdAndUpdate(postId, {$push: {comments: comment}});
+    await comment.save();
     return res.sendStatus(200);
   } catch (err) {
     console.log(err);
@@ -185,7 +192,7 @@ exports.commentPost = async (req, res, next) => {
 exports.getUserComments = async (req, res, next) => {
   try {
     const {userId} = req;
-    let comments = await Comment.find({userId}).sort({createdAt: 'descending'});
+    let comments = await Comment.find({userId, parentId: null}).sort({createdAt: 'descending'});
 
     comments = comments.map(comment => {
       let doc = {...comment._doc};

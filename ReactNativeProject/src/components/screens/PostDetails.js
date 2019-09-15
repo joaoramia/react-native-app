@@ -82,9 +82,9 @@ class PostDetails extends Component {
       this.setState({
         isLoading: false,
         dataSource: {...responseJson.comment},
+        postComments: responseJson.postComments,
         city
       })
-
     } catch(err) {
       this.alertRef.current._move();
     }
@@ -124,13 +124,13 @@ class PostDetails extends Component {
 
   render() {
 
-    const { dataSource, city } = this.state;
+    const { dataSource, city, postComments } = this.state;
 
     let comments = [];
-    if (dataSource) {
-      (dataSource.comments || []).sort((a, b) => a.createdAt > b.createdAt);
+    if (postComments && postComments.length) {
+      (postComments || []).sort((a, b) => a.createdAt > b.createdAt);
 
-      (dataSource.comments || []).forEach((comment, index) => {
+      (postComments || []).forEach((comment, index) => {
       comments.push(<RandomPost
           key={index}
           commentId={index}
@@ -144,6 +144,7 @@ class PostDetails extends Component {
           navigation={this.props.navigation}
           showOptions={true}
         >
+          <LikeButton style={{width: '20%'}} likes={comment.likes} commentId={comment._id} liked={comment.liked} disliked={comment.disliked} />
       </RandomPost>)
       })
     }
@@ -169,6 +170,7 @@ class PostDetails extends Component {
                   color={PostColors[dataSource.color || 0]}
                   navigation={this.props.navigation}
                   showOptions={true}
+                  marginBottom={4}
                 >
                   <LikeButton style={{width: '20%'}} likes={dataSource.likes} commentId={dataSource._id} liked={dataSource.liked} disliked={dataSource.disliked} />
               </RandomPost>
@@ -177,7 +179,7 @@ class PostDetails extends Component {
             <KeyboardAvoidingView
               style={styles.bottomBar}
               behavior="padding"
-              keyboardVerticalOffset = {Header.HEIGHT}>
+              keyboardVerticalOffset = {Header.HEIGHT + 23}>
               <View style={{height: 50, width: '85%', padding: 1, alignItems: 'center', justifyContent: 'center'}}>
                 <TextInput
                     style={styles.input}
@@ -188,6 +190,7 @@ class PostDetails extends Component {
                     underlineColorAndroid='transparent'
                     keyboardAppearance='dark'
                     returnKeyLabel='Enviar'
+                    multiline={true}
                   />
               </View>
               <View style={{width: '15%', alignItems: 'center', justifyContent: 'center'}}>
@@ -207,8 +210,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     bottom: 0,
-    position: 'relative',
-    // backgroundColor: 'red'
+    position: 'relative'
   },
   bottomBar: {
     backgroundColor: 'white',

@@ -32,7 +32,7 @@ const StackNavUser = createStackNavigator({
     UserSpecificFeed: {
       screen: UserSpecificFeed,
       navigationOptions: ({ navigation }) => ({
-        title: `My comments`,
+        title: `Voltar`,
       })
     },
     PostDetails

@@ -1,7 +1,10 @@
 import React, { Component } from "react";
-import { View, StyleSheet, TextInput, Button } from "react-native";
+import { View, StyleSheet, TextInput } from "react-native";
 import { getUserToken, getUserCoords } from "../../smart/helpers/session";
 import AlertMessage from "../presentation/AlertMessage";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 class NewPost extends Component {
     constructor() {
@@ -11,6 +14,7 @@ class NewPost extends Component {
             this.setState({token});
         })
         this.alertRef = React.createRef();
+        this.inputRef = React.createRef();
     }
     state = {
         text: '',
@@ -54,18 +58,29 @@ class NewPost extends Component {
             this.alertRef.current._move();
         }
     }
+
+    componentDidMount() {
+        this.inputRef.current.focus();
+    }
     render() {
         return (
             <View style={styles.container}>
                 <TextInput
-                    style={{ height: 40, color: 'white' }}
-                    placeholder="Enter your post here!"
+                    style={styles.textInput}
+                    placeholder="Sua história aqui 😆"
                     placeholderTextColor='rgb(230,230,230)'
                     onChangeText={(text) => this.setState({ text })}
                     value={this.state.text}
+                    ref={this.inputRef}
+                    multiline={true}
                 />
-                <Button title="Send!" onPress={() => this.post()}>
-                </Button>
+
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => this.state.text ? this.post() : null}
+                    style={styles.TouchableOpacityStyle}>
+                    <FontAwesomeIcon icon={faPaperPlane} size={20} color={this.state.text ? 'rgb(253, 150, 40)' : 'gray'}/>
+                </TouchableOpacity>
                 <AlertMessage ref={this.alertRef}></AlertMessage>
             </View>
         );
@@ -74,8 +89,30 @@ class NewPost extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#63B0CD',
         flex: 1
+    },
+    textInput: {
+        height: '50%',
+        color: 'black',
+        backgroundColor: 'white',
+        borderColor: 'rgb(240,240,240)',
+        margin: 10,
+        padding: 8,
+        borderRadius: 3,
+        fontSize: 22
+    },
+    button: {
+        backgroundColor: 'rgb(240,240,240)',
+        color: 'rgb(253, 150, 40)'
+    },
+    TouchableOpacityStyle: {
+        padding: 20,
+        fontSize: 22,
+        backgroundColor: 'white',
+        color: 'white',
+        alignItems: 'flex-end',
+        alignContent: 'flex-end',
+        textAlign: 'center'
     }
 });
 

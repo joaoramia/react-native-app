@@ -37,6 +37,10 @@ const commentSchema = new mongoose.Schema(
       type: Array,
       default: []
     },
+    parentId: {
+      type: String,
+      default: null
+    },
     reportAbuse: {
       type: Number,
       default: 0

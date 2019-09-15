@@ -72,7 +72,7 @@ class RandomPost extends Component {
     render() {
         Moment.locale('pt-br')
         return (
-                <View style={{...styles.container, ...{backgroundColor: this.props.color }}}>
+                <View style={{backgroundColor: this.props.color, marginBottom: this.props.marginBottom}}>
                     <TouchableWithoutFeedback style={styles.postHeader} onPress={() => this.props.clickable && this.goToDetails()}>
                         <FontAwesomeIcon size={postHeaderFontSize} icon={faMapPin} color={fontColor}/>
                         <Text style={{paddingLeft: 5, fontSize: postHeaderFontSize, color: fontColor}}>{this.props.city}</Text>
@@ -99,9 +99,6 @@ class RandomPost extends Component {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        marginTop: 4
-    },
     postHeader: {
         height: 45,
         flexDirection: 'row',
@@ -113,7 +110,6 @@ const styles = StyleSheet.create({
     },
     postFooter: {
         height: 45,
-        // top: 10,
         alignItems: 'center',
         alignContent: 'center',
         fontSize: 32

@@ -56,7 +56,6 @@ const isAuthenticated = (req, res, next) => {
   }
 };
 
-console.log(process.env)
 /**
  * Connect to MongoDB.
  */

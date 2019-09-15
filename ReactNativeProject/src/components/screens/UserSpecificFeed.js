@@ -4,7 +4,8 @@ import {
   StyleSheet,
   RefreshControl,
   ScrollView,
-  Text
+  Text,
+  ActivityIndicator
 } from "react-native";
 import RandomPost from "../presentation/RandomPost";
 import AddPostButton from "../presentation/AddPostButton";
@@ -36,6 +37,7 @@ class UserSpecificFeed extends Component {
     super(props);
     this.state = { isLoading: true, refreshing: false, token: null };
     this.alertRef = React.createRef();
+    this.fetchData();
   }
 
   _onRefresh = () => {
@@ -63,13 +65,16 @@ class UserSpecificFeed extends Component {
       })
     } catch(err) {
       this.alertRef.current._move();
+      this.setState({
+        isLoading: false
+      })
     }
   }
 
   render() {
     let posts = [];
 
-    const { dataSource } = this.state;
+    const { dataSource, isLoading } = this.state;
 
     for (let i = 0; i < (dataSource || []).length; i++) {
       let city = dataSource[i].city || 'unknown location';
@@ -95,18 +100,24 @@ class UserSpecificFeed extends Component {
           clickable={true}
           showOptions={true}
           navigation={this.props.navigation}
+          marginBottom={4}
         >
           <LikeButton style={{width: '20%'}} likes={dataSource[i].likes} commentId={dataSource[i]._id} liked={dataSource[i].liked} disliked={dataSource[i].disliked} />
         </RandomPost>
       );
     }
     return (
-      <View style={{ position: 'relative', backgroundColor: backgroundColor }}>
+      isLoading ? 
+        <View style={[styles.container, styles.horizontal]}>
+          <ActivityIndicator size="large" color="#aba9a9" />
+          <AlertMessage ref={this.alertRef}></AlertMessage>
+        </View>
+      :
+      <View style={{ position: 'relative', backgroundColor: backgroundColor, flex: 1 }}>
         <NavigationEvents
           onWillFocus={async payload => await this.fetchData()}
         />
         <ScrollView
-          style={styles.container}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -114,7 +125,12 @@ class UserSpecificFeed extends Component {
             />
           }
         >
-          {posts}
+          {
+          posts && posts.length ? 
+          posts 
+          :
+          <Text style={[styles.container, styles.horizontal]}>Você ainda não tem nenhum post 🤭</Text>
+          }
         </ScrollView>
         <AlertMessage ref={this.alertRef}></AlertMessage>
       </View>
@@ -123,7 +139,16 @@ class UserSpecificFeed extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {}
+  container: {
+    flex: 1,
+    justifyContent: 'center'
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    padding: 10,
+    height: '100%'
+  }
 });
 
 export default UserSpecificFeed ;
