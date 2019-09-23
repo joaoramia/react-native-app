@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, TextInput } from "react-native";
+import { View, StyleSheet, TextInput, Alert } from "react-native";
 import { getUserToken, getUserCoords } from "../../smart/helpers/session";
 import AlertMessage from "../presentation/AlertMessage";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
@@ -59,6 +59,14 @@ class NewPost extends Component {
         }
     }
 
+    changedText(text) {
+        if (text.length === 400) {
+            Alert.alert('Ooops, você chegou no limite de caracteres por post 😬');
+        } else if (text.length < 400) {
+            this.setState({text});
+        }
+    }
+
     componentDidMount() {
         this.inputRef.current.focus();
     }
@@ -67,12 +75,13 @@ class NewPost extends Component {
             <View style={styles.container}>
                 <TextInput
                     style={styles.textInput}
-                    placeholder="Sua história aqui 😆"
+                    placeholder="Seu post aqui 😆 é anônimo! 🕶"
                     placeholderTextColor='rgb(230,230,230)'
-                    onChangeText={(text) => this.setState({ text })}
+                    onChangeText={(text) => this.changedText(text)}
                     value={this.state.text}
                     ref={this.inputRef}
                     multiline={true}
+                    maxLength={400}
                 />
 
                 <TouchableOpacity

@@ -81,13 +81,13 @@ class Feed extends Component {
     const { dataSource, isLoading } = this.state;
 
     for (let i = 0; i < (dataSource || []).length; i++) {
-      let city = dataSource[i].city || 'unknown location';
+      let city = dataSource[i].city || '';
   
       if (typeof dataSource[i].distance === 'number') {
         if (dataSource[i].distance < 3) {
           city = 'muito perto';
         } else {
-          city = dataSource[i].distance;
+          city = dataSource[i].distance + ' km';
         }
       }
       posts.push(

@@ -19,7 +19,7 @@
 		3544BF9698465671CC4752C3 /* libPods-ReactNativeProject-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FFB1A1343CFD41AC1B3694F /* libPods-ReactNativeProject-tvOSTests.a */; };
 		37866F0D9829C4834BAD33EC /* libPods-ReactNativeProject.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B67502FE65C9983223B927F /* libPods-ReactNativeProject.a */; };
 		8B91F1036741162575FDDC2F /* libPods-ReactNativeProject-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DBB781E0BAD84AB172CE3B4 /* libPods-ReactNativeProject-tvOS.a */; };
-		AD92A82F22E8D3A700A130F7 /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = AD92A82E22E8D3A700A130F7 /* splash.png */; };
+		ADDB2A4923394A950041F0DA /* logo-1024.png in Resources */ = {isa = PBXBuildFile; fileRef = ADDB2A4823394A950041F0DA /* logo-1024.png */; };
 		DF23E7C6C29930400C1E627D /* libPods-ReactNativeProjectTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FF22174D121B9CED3859CBFB /* libPods-ReactNativeProjectTests.a */; };
 /* End PBXBuildFile section */
 
@@ -61,7 +61,7 @@
 		792C820C5DDFE558408E7CF0 /* Pods-ReactNativeProject-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeProject-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-ReactNativeProject-tvOS/Pods-ReactNativeProject-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		7C77D53A1CA4E0C192942B5C /* Pods-ReactNativeProject.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeProject.debug.xcconfig"; path = "Target Support Files/Pods-ReactNativeProject/Pods-ReactNativeProject.debug.xcconfig"; sourceTree = "<group>"; };
 		9F76756908F3DD3C3FDE1692 /* Pods-ReactNativeProject-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeProject-tvOS.release.xcconfig"; path = "Target Support Files/Pods-ReactNativeProject-tvOS/Pods-ReactNativeProject-tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		AD92A82E22E8D3A700A130F7 /* splash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = splash.png; path = ../../../../../splash.png; sourceTree = "<group>"; };
+		ADDB2A4823394A950041F0DA /* logo-1024.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "logo-1024.png"; path = "../../../../../iOS/iOS/AppIcon.appiconset/logo-1024.png"; sourceTree = "<group>"; };
 		C3E93813AE485ECAA3737033 /* Pods-ReactNativeProject-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeProject-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-ReactNativeProject-tvOSTests/Pods-ReactNativeProject-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		C93EDA670CEE40C5B0B85273 /* Pods-ReactNativeProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeProject.release.xcconfig"; path = "Target Support Files/Pods-ReactNativeProject/Pods-ReactNativeProject.release.xcconfig"; sourceTree = "<group>"; };
 		E207B2154B85BB5DDAAAF07E /* Pods-ReactNativeProjectTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeProjectTests.release.xcconfig"; path = "Target Support Files/Pods-ReactNativeProjectTests/Pods-ReactNativeProjectTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -203,7 +203,7 @@
 		AD92A82D22E8D38800A130F7 /* assets */ = {
 			isa = PBXGroup;
 			children = (
-				AD92A82E22E8D3A700A130F7 /* splash.png */,
+				ADDB2A4823394A950041F0DA /* logo-1024.png */,
 			);
 			path = assets;
 			sourceTree = "<group>";
@@ -351,8 +351,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADDB2A4923394A950041F0DA /* logo-1024.png in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				AD92A82F22E8D3A700A130F7 /* splash.png in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

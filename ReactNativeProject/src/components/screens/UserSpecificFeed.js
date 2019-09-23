@@ -10,7 +10,7 @@ import {
 import RandomPost from "../presentation/RandomPost";
 import AddPostButton from "../presentation/AddPostButton";
 import { backgroundColor, PostColors } from "../../common/assets/styles/variables";
-import { getUserToken } from "../../smart/helpers/session";
+import { getUserToken, getUserCoords } from "../../smart/helpers/session";
 import { NavigationEvents } from "react-navigation";
 import LikeButton from "../presentation/LikeButton";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -35,7 +35,7 @@ class UserSpecificFeed extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { isLoading: true, refreshing: false, token: null };
+    this.state = { isLoading: true, refreshing: false, token: null, error: false };
     this.alertRef = React.createRef();
     this.fetchData();
   }
@@ -49,14 +49,18 @@ class UserSpecificFeed extends Component {
 
   async fetchData() {
     try {
-      const token = await getUserToken()
+      const token = await getUserToken();
+      const coords = await getUserCoords();
       const response = await fetch('http://127.0.0.1:8080/api/me/comments', {
-        method: 'GET',
+        method: 'POST',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
-        }
+        },
+        body: JSON.stringify({
+          coords
+        })
       })
       const responseJson = await response.json();
       this.setState({
@@ -66,7 +70,8 @@ class UserSpecificFeed extends Component {
     } catch(err) {
       this.alertRef.current._move();
       this.setState({
-        isLoading: false
+        isLoading: false,
+        error: true
       })
     }
   }
@@ -74,16 +79,16 @@ class UserSpecificFeed extends Component {
   render() {
     let posts = [];
 
-    const { dataSource, isLoading } = this.state;
+    const { dataSource, isLoading, error } = this.state;
 
     for (let i = 0; i < (dataSource || []).length; i++) {
-      let city = dataSource[i].city || 'unknown location';
+      let city = dataSource[i].city || '';
   
       if (typeof dataSource[i].distance === 'number') {
         if (dataSource[i].distance < 3) {
           city = 'muito perto';
         } else {
-          city = dataSource[i].distance;
+          city = dataSource[i].distance + ' km';
         }
       }
       posts.push(
@@ -118,18 +123,20 @@ class UserSpecificFeed extends Component {
           onWillFocus={async payload => await this.fetchData()}
         />
         <ScrollView
+          contentContainerStyle={(posts && posts.length) ? {} : {flex: 1, justifyContent: 'center', alignItems: 'center'}}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
               onRefresh={async() => await this.fetchData()}
             />
           }
+          
         >
           {
           posts && posts.length ? 
           posts 
           :
-          <Text style={[styles.container, styles.horizontal]}>Você ainda não tem nenhum post 🤭</Text>
+          (!error ? <Text style={{fontSize: 16}}>Você ainda não tem nenhum post 🤭</Text> : null)
           }
         </ScrollView>
         <AlertMessage ref={this.alertRef}></AlertMessage>

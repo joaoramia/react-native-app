@@ -4,6 +4,7 @@ import {
     StatusBar,
     StyleSheet,
     View,
+    Alert
 } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage'
@@ -21,16 +22,26 @@ export class AuthLoading extends React.Component {
             if (info.coords) {
                 await AsyncStorage.setItem('coords', JSON.stringify(info.coords));
             }
+            const userToken = await AsyncStorage.getItem('userToken');
+    
+            // This will switch to the App screen or Auth screen and this loading
+            // screen will be unmounted and thrown away.
+            if (userToken) {
+                this.props.navigation.navigate('Feed')
+            } else {
+                this.signUp();
+            }
+        }, async error => {
+            const userToken = await AsyncStorage.getItem('userToken');
+    
+            // This will switch to the App screen or Auth screen and this loading
+            // screen will be unmounted and thrown away.
+            if (userToken) {
+                this.props.navigation.navigate('Feed')
+            } else {
+                this.signUp();
+            }
         })
-        const userToken = await AsyncStorage.getItem('userToken');
-
-        // This will switch to the App screen or Auth screen and this loading
-        // screen will be unmounted and thrown away.
-        if (userToken) {
-            this.props.navigation.navigate('Feed')
-        } else {
-            this.signUp();
-        }
     };
 
     signUp() {
@@ -45,11 +56,22 @@ export class AuthLoading extends React.Component {
             .then(res => res.json())
             .then(res => {
                 AsyncStorage.setItem('userToken', res.token);
-                alert(res.token)
                 this.props.navigation.navigate('Feed');
             })
             .catch(err => {
-                alert('ERROR!', JSON.stringify(err));
+                Alert.alert(
+                    'Ooops, houve um erro 💩',
+                    'Verifique sua conexão e tente novamente 😊',
+                    [
+                        {
+                            text: 'Tentar novamente',
+                            onPress: async () => {
+                                this.signUp();
+                            }
+                        }
+                    ],
+                    {cancelable: false},
+                    );
             })
     }
 

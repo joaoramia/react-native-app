@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faMapPin, faCircle } from '@fortawesome/free-solid-svg-icons'
+import { faMapPin, faCircle, faUser } from '@fortawesome/free-solid-svg-icons'
 import Moment from 'moment'
 import 'moment/min/locales'
 import {fontColor, postHeaderFontSize} from '../../common/assets/styles/variables'
@@ -74,9 +74,13 @@ class RandomPost extends Component {
         return (
                 <View style={{backgroundColor: this.props.color, marginBottom: this.props.marginBottom}}>
                     <TouchableWithoutFeedback style={styles.postHeader} onPress={() => this.props.clickable && this.goToDetails()}>
-                        <FontAwesomeIcon size={postHeaderFontSize} icon={faMapPin} color={fontColor}/>
+                        {
+                            this.props.postOwner ? 
+                            <Text style={{paddingRight: this.props.city ? 5 : 0, fontSize: postHeaderFontSize, fontWeight: 'bold', color: fontColor}}>@{this.props.postOwner}</Text>
+                            : null }
+                        {this.props.city ? <FontAwesomeIcon size={postHeaderFontSize} icon={faMapPin} color={fontColor}/> : null }
                         <Text style={{paddingLeft: 5, fontSize: postHeaderFontSize, color: fontColor}}>{this.props.city}</Text>
-                        <FontAwesomeIcon style={{marginLeft: 5, marginRight: 5}} size={6} icon={faCircle} color={fontColor}/>
+                        {this.props.city ? <FontAwesomeIcon style={{marginLeft: 5, marginRight: 5}} size={6} icon={faCircle} color={fontColor}/> : null}
                         <Text style={{fontSize: postHeaderFontSize, color: fontColor}}>{Moment(Moment(this.props.time).toDate()).fromNow()}</Text>
                     </TouchableWithoutFeedback>
                     <View style={styles.postBody}>

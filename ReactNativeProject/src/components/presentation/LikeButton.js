@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 import { getUserToken } from '../../smart/helpers/session';
@@ -48,15 +48,14 @@ export default class LikeButton extends Component {
                 likes: this.state.likes + value,
                 update: true
             })
-            console.log(responseJson);
         } catch (err) {
-            alert(err)
+            this.setState({isLoading: false});
         }
     }
 
     render() {
         if (this.state.update) {
-            const { likes, commentId, liked, disliked } = this.state;
+            const { likes, commentId, liked, disliked, isLoading } = this.state;
             return (
                 <View style={styles.MainContainer}>
                     <TouchableOpacity
@@ -65,7 +64,7 @@ export default class LikeButton extends Component {
                         style={styles.TouchableOpacityStyle}>
                         <FontAwesomeIcon icon={faAngleUp} size={28} color={disliked ? fontColorTransparent  : (liked ? fontColorHalfTransparent : fontColor)} />
                     </TouchableOpacity>
-                    <Text style={{color: fontColor}}>{likes || 0}</Text>
+                    {isLoading ? <ActivityIndicator size="small" color="#00ff00" /> : <Text style={{color: fontColor}}>{likes || 0}</Text>}
                     <TouchableOpacity
                         activeOpacity={0.7}
                         onPress={() => !liked && !disliked ? this.like(commentId, -1) : null}
@@ -75,7 +74,7 @@ export default class LikeButton extends Component {
                 </View>
             );
         } else {
-            const { likes, commentId, liked, disliked } = this.props;
+            const { likes, commentId, liked, disliked, isLoading } = this.props;
             return (
                 <View style={styles.MainContainer}>
                     <TouchableOpacity
@@ -84,7 +83,7 @@ export default class LikeButton extends Component {
                         style={styles.TouchableOpacityStyle}>
                         <FontAwesomeIcon icon={faAngleUp} size={28} color={disliked ? fontColorTransparent  : (liked ? fontColorHalfTransparent : fontColor)} />
                     </TouchableOpacity>
-                    <Text style={{color: fontColor}}>{likes || 0}</Text>
+                    {isLoading ? <ActivityIndicator size="small" color="#00ff00" /> : <Text style={{color: fontColor}}>{likes || 0}</Text>}
                     <TouchableOpacity
                         activeOpacity={0.7}
                         onPress={() => !liked && !disliked ? this.like(commentId, -1) : null}

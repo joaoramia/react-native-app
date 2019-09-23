@@ -14,19 +14,19 @@ exports.postComment = async (req, res, next) => {
     // })
 
     // put inside of googleMapsClient callback:
-    const geoResults = fakeGoogleResult.json.results || [];
-    const city = geoResults.reduce((prev, curr) => {
-      const foundCity = (curr.address_components || []).reduce((prev2, curr2) => {
-        if (curr2.types.indexOf('locality') >= 0) {
-          return curr2;
-        } else {
-          return prev2;
-        }
-      }, null);
-      return foundCity || prev;
-    }, null);
+    // const geoResults = fakeGoogleResult.json.results || [];
+    // const city = geoResults.reduce((prev, curr) => {
+    //   const foundCity = (curr.address_components || []).reduce((prev2, curr2) => {
+    //     if (curr2.types.indexOf('locality') >= 0) {
+    //       return curr2;
+    //     } else {
+    //       return prev2;
+    //     }
+    //   }, null);
+    //   return foundCity || prev;
+    // }, null);
 
-    console.log('xxxxxxxxx', city);
+    // console.log('xxxxxxxxx', city);
 
     let comment;
     let coords;
@@ -36,9 +36,9 @@ exports.postComment = async (req, res, next) => {
         lat: latitude,
         lng: longitude
       }
-      comment = new Comment({ content, color, userId, city: city.long_name, coords});
+      comment = new Comment({ content, color, userId, coords});
     } else {
-      comment = new Comment({ content, color, userId, city: city.long_name});
+      comment = new Comment({ content, color, userId});
     }
     
     await comment.save();
@@ -53,23 +53,23 @@ exports.getComments = async (req, res, next) => {
   const coords = req.body.coords;
   console.log('=================', coords);
   try {
-    let comments = await Comment.find({parentId: null}).sort({createdAt: 'descending'});
-    if (coords) {
-      comments = comments.map(comment => {
-        let doc = {...comment._doc};
-        if (comment.likedUsers && comment.likedUsers.indexOf(req.userId) >= 0) {
-          doc = {...doc, liked: true};
-        }
-        if (comment.likedUsers && comment.dislikedUsers.indexOf(req.userId) >= 0) {
-          doc = {...doc, disliked: true};
-        }
-        if (comment.coords && comment.coords.lat) {
-          const distance = getDistanceFromLatLonInKm(coords.latitude, coords.longitude, comment.coords.lat, comment.coords.lng);
-          doc = {...doc, distance};
-        }
-        return doc;
-      })
-    }
+    let comments = await Comment.find({parentId: null}).sort({createdAt: 'descending'}).limit( 120 );
+
+    comments = comments.map(comment => {
+      let doc = {...comment._doc};
+      if (comment.likedUsers && comment.likedUsers.indexOf(req.userId) >= 0) {
+        doc = {...doc, liked: true};
+      }
+      if (comment.likedUsers && comment.dislikedUsers.indexOf(req.userId) >= 0) {
+        doc = {...doc, disliked: true};
+      }
+      if (coords && coords.latitude && comment.coords && comment.coords.lat) {
+        const distance = getDistanceFromLatLonInKm(coords.latitude, coords.longitude, comment.coords.lat, comment.coords.lng);
+        doc = {...doc, distance};
+      }
+      return doc;
+    })
+
     console.log(comments[0]);
     res.status(200).send({ comments });
   } catch (err) {
@@ -79,10 +79,11 @@ exports.getComments = async (req, res, next) => {
 };
 
 exports.getComment = async (req, res, next) => {
+  const coords = req.body.coords;
   const id = req.params.id;
   try {
     const comment = await Comment.findById(id);
-    let postComments = await Comment.find({parentId: id}).sort({createdAt: 'ascending'});
+    let postComments = await Comment.find({parentId: id}).sort({createdAt: 'ascending'}).limit( 100 );
 
     let doc = {...comment._doc};
 
@@ -92,6 +93,11 @@ exports.getComment = async (req, res, next) => {
 
     if (comment.likedUsers && comment.dislikedUsers.indexOf(req.userId) >= 0) {
       doc = {...doc, disliked: true};
+    }
+
+    if (coords && coords.latitude && comment.coords && comment.coords.lat) {
+      const distance = getDistanceFromLatLonInKm(coords.latitude, coords.longitude, comment.coords.lat, comment.coords.lng);
+      doc = {...doc, distance};
     }
 
     postComments = postComments.map(comment => {
@@ -154,19 +160,19 @@ exports.commentPost = async (req, res, next) => {
     // })
 
     // put inside of googleMapsClient callback:
-    const geoResults = fakeGoogleResult.json.results || [];
-    const city = geoResults.reduce((prev, curr) => {
-      const foundCity = (curr.address_components || []).reduce((prev2, curr2) => {
-        if (curr2.types.indexOf('locality') >= 0) {
-          return curr2;
-        } else {
-          return prev2;
-        }
-      }, null);
-      return foundCity || prev;
-    }, null);
+    // const geoResults = fakeGoogleResult.json.results || [];
+    // const city = geoResults.reduce((prev, curr) => {
+    //   const foundCity = (curr.address_components || []).reduce((prev2, curr2) => {
+    //     if (curr2.types.indexOf('locality') >= 0) {
+    //       return curr2;
+    //     } else {
+    //       return prev2;
+    //     }
+    //   }, null);
+    //   return foundCity || prev;
+    // }, null);
 
-    console.log('xxxxxxxxx', city);
+    // console.log('xxxxxxxxx', city);
 
     let comment;
     let coords;
@@ -176,9 +182,9 @@ exports.commentPost = async (req, res, next) => {
         lat: latitude,
         lng: longitude
       }
-      comment = new Comment({ parentId: postId, content, userId, color, city: city.long_name, coords, likes: 0, likedUsers: [], dislikedUsers: []});
+      comment = new Comment({ parentId: postId, content, userId, color, coords, likes: 0, likedUsers: [], dislikedUsers: []});
     } else {
-      comment = new Comment({ parentId: postId, content, userId, color, city: city.long_name, likes: 0, likedUsers: [], dislikedUsers: []});
+      comment = new Comment({ parentId: postId, content, userId, color, likes: 0, likedUsers: [], dislikedUsers: []});
     }
 
     await comment.save();
@@ -192,7 +198,8 @@ exports.commentPost = async (req, res, next) => {
 exports.getUserComments = async (req, res, next) => {
   try {
     const {userId} = req;
-    let comments = await Comment.find({userId, parentId: null}).sort({createdAt: 'descending'});
+    const coords = req.body.coords;
+    let comments = await Comment.find({userId, parentId: null}).sort({createdAt: 'descending'}).limit( 200 );
 
     comments = comments.map(comment => {
       let doc = {...comment._doc};
@@ -201,6 +208,11 @@ exports.getUserComments = async (req, res, next) => {
       }
       if (comment.likedUsers && comment.dislikedUsers.indexOf(req.userId) >= 0) {
         doc = {...doc, disliked: true};
+      }
+
+      if (coords && coords.latitude && comment.coords && comment.coords.lat) {
+        const distance = getDistanceFromLatLonInKm(coords.latitude, coords.longitude, comment.coords.lat, comment.coords.lng);
+        doc = {...doc, distance};
       }
       return doc;
     })

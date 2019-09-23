@@ -1,10 +1,10 @@
 export const PostColors = [
-    'rgb(158, 199, 49)',
-    'rgb(30, 168, 203)',
-    'rgb(215, 100, 100)',
-    'rgb(253, 150, 40)',
-    'rgb(88, 88, 88)',
-    'rgb(253, 150, 40)'
+    'rgb(56, 190, 190)',
+    'rgb(55, 55, 61)',
+    'rgb(56, 190, 190)',
+    'rgb(56, 190, 190)',
+    'rgb(55, 55, 61)',
+    'rgb(55, 55, 61)',
 ]
 
 export const dangerNotificationColor = 'rgb(203, 48, 52)'

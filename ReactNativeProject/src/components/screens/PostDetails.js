@@ -5,11 +5,12 @@ import {
   KeyboardAvoidingView,
   Text,
   Keyboard,
-  RefreshControl
+  RefreshControl,
+  Alert
 } from "react-native";
 import { Header } from 'react-navigation';
 import RandomPost from "../presentation/RandomPost";
-import { getUserToken } from "../../smart/helpers/session";
+import { getUserToken, getUserCoords } from "../../smart/helpers/session";
 import LikeButton from "../presentation/LikeButton";
 import { faPaperPlane, faSearch, faBiohazard, faArchive } from '@fortawesome/free-solid-svg-icons'
 import { TextInput, ScrollView, TouchableWithoutFeedback } from "react-native-gesture-handler";
@@ -55,27 +56,31 @@ class PostDetails extends Component {
   async fetchData() {
     try {
       const token = await getUserToken();
+      const coords = await getUserCoords();
 
       const id = this.props.navigation.getParam('id', 'NO-ID')
       
       const response = await fetch(`http://127.0.0.1:8080/api/comments/${id}`, {
-        method: 'GET',
+        method: 'POST',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
-        }
+        },
+        body: JSON.stringify({
+          coords
+        })
       })
 
       const responseJson = await response.json();
       const {comment} = responseJson;
-      let city = comment.city || 'unknown location';
+      let city = comment.city || '';
   
       if (typeof comment.distance === 'number') {
         if (comment.distance < 3) {
           city = 'muito perto';
         } else {
-          city = comment.distance;
+          city = comment.distance + ' km';
         }
       }
 
@@ -96,6 +101,7 @@ class PostDetails extends Component {
     }
     try {
       const token = await getUserToken();
+      const coords = await getUserCoords();
       const id = this.props.navigation.getParam('id', 'NO-ID');
       const content = this.state.message;
       
@@ -109,7 +115,8 @@ class PostDetails extends Component {
         body: JSON.stringify({
             postId: id,
             content,
-            color: Math.ceil(Math.random() * (5))
+            color: Math.ceil(Math.random() * (5)),
+            coords
         })
       })
 
@@ -122,15 +129,35 @@ class PostDetails extends Component {
     }
   }
 
+  changedText(text) {
+    if (text.length === 400) {
+        Alert.alert('Ooops, você chegou no limite de caracteres 😬');
+    } else if (text.length < 400) {
+      this.setState({message: text});
+    }
+}
+
   render() {
 
     const { dataSource, city, postComments } = this.state;
 
     let comments = [];
+    let users = [dataSource && dataSource.userId];
     if (postComments && postComments.length) {
       (postComments || []).sort((a, b) => a.createdAt > b.createdAt);
 
       (postComments || []).forEach((comment, index) => {
+        let commentUserId = comment.userId;
+        const postOwnerIndex = users.indexOf(commentUserId);
+        if (postOwnerIndex === 0) {
+          commentUserId = 'TinTin';
+        } else if (postOwnerIndex < 0) {
+          users.push(commentUserId);
+          commentUserId = users.length - 1;
+        } else {
+          commentUserId = postOwnerIndex;
+        }
+        
       comments.push(<RandomPost
           key={index}
           commentId={index}
@@ -143,6 +170,7 @@ class PostDetails extends Component {
           disliked={comment.disliked}
           navigation={this.props.navigation}
           showOptions={true}
+          postOwner={commentUserId}
         >
           <LikeButton style={{width: '20%'}} likes={comment.likes} commentId={comment._id} liked={comment.liked} disliked={comment.disliked} />
       </RandomPost>)
@@ -171,6 +199,7 @@ class PostDetails extends Component {
                   navigation={this.props.navigation}
                   showOptions={true}
                   marginBottom={4}
+                  postOwner="TinTin"
                 >
                   <LikeButton style={{width: '20%'}} likes={dataSource.likes} commentId={dataSource._id} liked={dataSource.liked} disliked={dataSource.disliked} />
               </RandomPost>
@@ -183,7 +212,7 @@ class PostDetails extends Component {
               <View style={{height: 50, width: '85%', padding: 1, alignItems: 'center', justifyContent: 'center'}}>
                 <TextInput
                     style={styles.input}
-                    onChangeText={text => this.setState({ message: text })}
+                    onChangeText={text => this.changedText(text)}
                     ref={input => { this.textInput = input }}
                     placeholderTextColor='rgb(100,100,100)'
                     placeholder='Faça aqui seu comentário 🙂'
@@ -191,6 +220,7 @@ class PostDetails extends Component {
                     keyboardAppearance='dark'
                     returnKeyLabel='Enviar'
                     multiline={true}
+                    maxLength={400}
                   />
               </View>
               <View style={{width: '15%', alignItems: 'center', justifyContent: 'center'}}>
