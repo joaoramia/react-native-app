@@ -20,7 +20,7 @@
     "express": "^4.17.0",
     "jsonwebtoken": "^8.5.1",
     "lusca": "^1.6.1",
-    "mongoose": "^5.5.10",
+    "mongoose": "^5.7.5",
     "mongoose-unique-validator": "^2.0.3",
     "prettier": "^1.17.1"
   },
